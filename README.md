@@ -10,7 +10,7 @@ The older NextGen (4.0x) patchers no longer work on Remastered: they either cras
 
 ## Download
 
-Grab `W3UltrawideFix.exe` from the [latest release](../../releases/latest) (or from Nexus Mods).
+Grab `W3UltrawideFix.exe` from the [latest release](../../releases/latest) or from [Nexus Mods](https://www.nexusmods.com/witcher3/mods/13876).
 
 ## Usage
 
