@@ -17,13 +17,17 @@ static class GameLocator
 
     public static List<ExeInfo> FindExecutables(string root) =>
         Executables
-            .Select(e => new ExeInfo(Path.Combine(root, e.Rel), e.Label))
+            .Select(e => (Path: Path.Combine(root, e.Rel), e.Label))
             .Where(e => File.Exists(e.Path))
+            .Select(e => new ExeInfo(e.Path, e.Label))
             .ToList();
 
     public static string? FindGameRoot(string? userPath)
     {
-        foreach (var candidate in Candidates(userPath))
+        if (userPath != null)
+            return NormalizeToRoot(userPath);
+
+        foreach (var candidate in Candidates())
         {
             var root = NormalizeToRoot(candidate);
             if (root != null) return root;
@@ -42,15 +46,14 @@ static class GameLocator
             // Accept the game root itself, or any folder up to two levels inside it (e.g. bin\x64_dx12).
             var dir = new DirectoryInfo(path);
             for (int i = 0; i < 3 && dir != null; i++, dir = dir.Parent)
-                if (FindExecutables(dir.FullName).Count > 0) return dir.FullName;
+                if (Executables.Any(e => File.Exists(Path.Combine(dir.FullName, e.Rel)))) return dir.FullName;
         }
         catch (Exception) { }
         return null;
     }
 
-    static IEnumerable<string?> Candidates(string? userPath)
+    static IEnumerable<string?> Candidates()
     {
-        yield return userPath;
         yield return AppDomain.CurrentDomain.BaseDirectory;
         yield return Environment.CurrentDirectory;
 

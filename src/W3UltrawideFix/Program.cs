@@ -56,7 +56,7 @@ static class Program
                 case "--restore": restore = true; break;
                 case "--res" when i + 1 < args.Length: res = args[++i]; break;
                 case "--path" when i + 1 < args.Length: path = args[++i]; break;
-                case "-h" or "--help" or "/?": PrintHelp(); return 0;
+                case "-h" or "--help" or "/?": _interactive = false; PrintHelp(); return 0;
                 default: path ??= args[i]; break;
             }
         }
@@ -85,14 +85,13 @@ static class Program
         foreach (var exe in exes)
         {
             Patcher.Inspect(exe);
-            var version = FileVersionInfo.GetVersionInfo(exe.Path).FileVersion?.Split('(')[0].Trim();
             var state = exe.State switch
             {
                 ExeState.Original => $"original 16:9 ({exe.Occurrences} values found)",
                 ExeState.Patched => $"patched, aspect ratio {exe.CurrentRatio:0.####}",
                 _ => "unsupported or modified by another tool",
             };
-            Info($"{exe.Label} exe, version {version}: {state}");
+            Info($"{exe.Label} exe, version {exe.Version}: {state}");
         }
         Console.WriteLine();
 
@@ -163,7 +162,7 @@ static class Program
             Success($"{exe.Label}: replaced {count} values. Backup: {System.IO.Path.GetFileName(exe.BackupPath)}");
         }
         Console.WriteLine();
-        Success("Done! Cutscenes will now fill the whole screen.");
+        Success("Patch installed. Select the matching resolution in-game and check a cutscene.");
         Info("Note: game updates and \"Verify integrity of game files\" undo the fix. Just run this tool again.");
         return 0;
     }

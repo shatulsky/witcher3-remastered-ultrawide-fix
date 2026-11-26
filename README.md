@@ -11,6 +11,7 @@ The older NextGen (4.0x) patchers no longer work on Remastered: they either cras
 ## Download
 
 Grab `W3UltrawideFix.exe` from the [latest release](../../releases/latest) or from [Nexus Mods](https://www.nexusmods.com/witcher3/mods/13876).
+For patch 5.02, use a release that lists 5.02 support or build the executable from source using the instructions below.
 
 ## Usage
 
@@ -34,17 +35,15 @@ W3UltrawideFix.exe --restore
 W3UltrawideFix.exe --path "D:\Games\The Witcher 3" --res 5120x1440
 ```
 
-> Game updates and *Verify integrity of game files* replace `witcher3.exe` and undo the fix. Run the tool again afterwards.
+> Game updates and *Verify integrity of game files* can replace `witcher3.exe` and undo the fix. Check the new build's compatibility before applying the patch again.
 
 ## How it works
 
-Cutscenes are letterboxed to a hard-coded 16:9 aspect ratio, stored in the executable as the 32-bit float `1.7777778` (`39 8E E3 3F`). The tool replaces **every** occurrence of that value in `bin\x64_dx12\witcher3.exe` (and `bin\x64\witcher3.exe` if present) with your monitor's aspect ratio.
+Cutscenes are letterboxed to a hard-coded 16:9 aspect ratio stored in the executable. For Steam patch 5.02, the tool verifies the executable against the original build and replaces the three confirmed values in `bin\x64_dx12\witcher3.exe` with your monitor's aspect ratio. It refuses 5.02 executables that differ outside these values. Earlier builds use the existing aspect-ratio scan.
 
-Replacing only some occurrences is not enough - in 5.x patching a single value either has no effect or crashes the game on load. All of them must change together.
+For 5.02, the original is saved as `witcher3.exe.uwfix-1145604-backup`. The tool preserves an existing `witcher3.exe.uwfix-backup` and can restore from it if it matches the verified 5.02 executable.
 
-Before patching, the original exe is saved as `witcher3.exe.uwfix-backup`. The backup is only reused if it matches the current game build, so a stale backup from before a game update can never be restored over a newer exe.
-
-Tested with Steam, version `5.0.0.1048522` (patch 5.01), DirectX 12, 3440x1440.
+Applying and restoring the fix at 3440x1440 was verified on copies of the Steam DirectX 12 executables for `5.0.0.1145604` (patch 5.02) and `5.0.0.1048522` (patch 5.01).
 
 ## Building
 
